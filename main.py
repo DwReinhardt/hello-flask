@@ -1,32 +1,32 @@
 from flask import Flask, request, redirect
 import cgi
+import os
+import jinja2
+
+# include the following lines when using templates
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+jinja_env = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(template_dir), autoescape=True) 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-
+# up
 
 form = """
-<!doctype html>
-<html>
-    <body>
-        <form action="/hello" method="post">
-            <label for="first name">First Name:</label>
-            <input id="first name" type="text" name="first_name" />
-            <input type="submit" />
-        </form>
-    </body>
-</html>
+
 """
 
 @app.route("/")
 def index():
-    return form
+    template = jinja_env.get_template('hello_form.html')
+    return template.render()
 
 @app.route("/hello", methods=['post'])
 
 def hello():
     first_name = request.form['first_name']
-    return "<h1> Hello, " + cgi.escape(first_name) + "</h1>" # escaped html, prevents hacking
+    template = jinja_env.get_template('hello_greeting.html')
+    return template.render(first_name=first_name) # escaped html, prevents hacking
 
 
 time_form = """
