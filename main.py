@@ -28,30 +28,10 @@ def hello():
     template = jinja_env.get_template('hello_greeting.html')
     return template.render(first_name=first_name) # escaped html, prevents hacking
 
-
-time_form = """
-    <style>
-        .error {{ color: red; }}
-    </style>
-    <h1>Validate Time</h1>
-    <form method='POST'>
-        <label>Hours (24-hour format)
-            <input name="hours" type="text" value="{hours}" />
-        </label>
-        <p class="error">{hours_error}</p>
-        
-        <label>Minutes
-            <input name="minutes" type="text" value="{minutes}" />
-        </label>
-        <p class="error">{minutes_error}</p>
-
-        <input type="submit" value="Validate" />
-"""
-
 @app.route("/validate-time")
 def display_time_form():
-    return time_form.format(hours='', hours_error='',
-    minutes='', minutes_error='')
+    template = jinja_env.get_template('time_form.html')
+    return template.render()
 
 def is_integer(num): #determine if string can be converted to int
     try:
@@ -95,8 +75,10 @@ def validate_time():
         return redirect('/valid-time?time={0}'.format(time))
 
     else:
-        return time_form.format(hours_error=hours_error, minutes_error=minutes_error, 
-        hours=hours, minutes=minutes )
+        template = jinja_env.get_template('time_form.html')
+        return template.render(hours_error=hours_error, minutes_error=minutes_error, 
+        hours=hours, 
+        minutes=minutes)
 
 @app.route('/valid-time')
 def valid_time():
